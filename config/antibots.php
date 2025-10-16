@@ -17,7 +17,7 @@ return [
         'blocker' => false,
 
         // Antibots true | false
-        'GUARD' => true,
+        'GUARD' => false,
 
         // Guardian (config avanzada) true | false
         'anti_bots' => true,
