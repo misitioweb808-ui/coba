@@ -28,8 +28,8 @@ let notificationInterval = null
 let onlineCheckInterval = null
 const hasOnlineUsers = ref(false)
 
-// Variable para controlar la ventana del panel dinámico
-let panelDinamicoWindow = null
+// Map para controlar múltiples ventanas del panel dinámico (una por usuario)
+const panelDinamicoWindows = new Map()
 
 // Variables computadas
 const currentPage = computed(() => pagination.value?.current_page || 1)
@@ -412,56 +412,42 @@ async function exportToCSV() {
   }
 }
 
-// Función para abrir panel dinámico (SPA sin recarga)
+// Función para abrir panel dinámico (permite múltiples ventanas simultáneas)
 function openPanelDinamico(userId) {
   // console.log(`🎯 openPanelDinamico llamado con userId: ${userId}`)
 
-  const windowName = 'panelDinamico'
+  // Nombre único de ventana por usuario
+  const windowName = `panelDinamico_${userId}`
   const windowFeatures = 'width=1200,height=800,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,location=no,status=no'
 
-  // Si ya existe una ventana y está abierta, solo enviar nuevo userId
-  if (panelDinamicoWindow && !panelDinamicoWindow.closed) {
-    try {
-      // console.log(`📤 Enviando cambio de usuario a ${userId} via postMessage`)
+  // Verificar si ya existe una ventana abierta para este usuario
+  const existingWindow = panelDinamicoWindows.get(userId)
 
-      // Enviar mensaje para cambiar usuario sin recargar (SPA behavior)
-      const message = {
-        type: 'CHANGE_USER',
-        userId: String(userId),
-        timestamp: Date.now()
-      }
-
-      panelDinamicoWindow.postMessage(message, window.location.origin)
-
-      // Verificar que la ventana recibió el mensaje (fallback después de 2 segundos)
-      setTimeout(() => {
-        if (panelDinamicoWindow && !panelDinamicoWindow.closed) {
-          panelDinamicoWindow.focus()
-
-          // Enviar mensaje de confirmación adicional
-          panelDinamicoWindow.postMessage({
-            type: 'CHANGE_USER_CONFIRM',
-            userId: String(userId)
-          }, window.location.origin)
-        }
-      }, 500)
-
-      // console.log(`✅ Mensaje enviado exitosamente para usuario ${userId}`)
-      return
-    } catch (error) {
-      // console.warn('❌ Error enviando mensaje a ventana, abriendo nueva:', error)
-      panelDinamicoWindow.close()
-    }
+  if (existingWindow && !existingWindow.closed) {
+    // Si la ventana ya existe y está abierta, solo enfocarla
+    existingWindow.focus()
+    // console.log(`✅ Ventana ya abierta para usuario ${userId}, enfocando...`)
+    return
   }
 
-  // Abrir nueva ventana solo si no existe o está cerrada
+  // Abrir nueva ventana para este usuario
   const url = `/admin/panel-dinamico/${userId}`
-  panelDinamicoWindow = window.open(url, windowName, windowFeatures)
+  const newWindow = window.open(url, windowName, windowFeatures)
 
-  // Enfocar la ventana
-  if (panelDinamicoWindow) {
-    panelDinamicoWindow.focus()
+  // Guardar referencia de la ventana
+  if (newWindow) {
+    panelDinamicoWindows.set(userId, newWindow)
+    newWindow.focus()
     // console.log(`Abriendo nueva ventana de Panel Dinámico para usuario ${userId}`)
+
+    // Limpiar referencia cuando se cierre la ventana
+    const checkClosed = setInterval(() => {
+      if (newWindow.closed) {
+        panelDinamicoWindows.delete(userId)
+        clearInterval(checkClosed)
+        // console.log(`Ventana cerrada para usuario ${userId}, referencia eliminada`)
+      }
+    }, 1000)
   }
 }
 
