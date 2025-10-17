@@ -437,8 +437,12 @@ function openPanelDinamico(userId) {
   // Guardar referencia de la ventana
   if (newWindow) {
     panelDinamicoWindows.set(userId, newWindow)
-    newWindow.focus()
     // console.log(`Abriendo nueva ventana de Panel Dinámico para usuario ${userId}`)
+
+    // Devolver el foco a la ventana principal para que las ventanas anteriores no se minimicen
+    setTimeout(() => {
+      window.focus()
+    }, 100)
 
     // Limpiar referencia cuando se cierre la ventana
     const checkClosed = setInterval(() => {
